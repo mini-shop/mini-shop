@@ -1,0 +1,111 @@
+<template>
+  <div class="home-page">
+    <van-sticky>
+      <van-search
+        v-model="keywords"
+        placeholder="请输入搜索关键词"
+        input-align="center"
+        clearable />
+      <div class="address-and-switch">
+        <span class="address">
+          <van-icon name="location-o" /> 鲁谷路6号店自提点 <van-icon name="arrow" />
+        </span>
+        <div class="switch-btn">
+          <span class="active">自提</span>
+          <span>外送</span>
+        </div>
+      </div>
+    </van-sticky>
+    <van-swipe class="swipe" :autoplay="3000" indicator-color="white">
+      <van-swipe-item v-for="item in swiperList" :key="item.id">
+        <van-image lazy-load :src="item.image" />
+      </van-swipe-item>
+    </van-swipe>
+  </div>
+</template>
+
+<script lang="ts">
+import { Vue, Component } from 'vue-property-decorator'
+import { getCategoryTopTen } from '@/api/index'
+
+@Component({
+  name: 'Home'
+})
+
+export default class extends Vue {
+  private keywords = ''
+  private swiperList = [
+    { id: 1, image: 'https://qiniu.minishop.cool/7a9ba20bfc606abe.jpg' },
+    { id: 2, image: 'https://qiniu.minishop.cool/24f604f4462a5036.png' },
+    { id: 3, image: 'https://qiniu.minishop.cool/95bb119bcf5aca5b.jpg' },
+    { id: 4, image: 'https://qiniu.minishop.cool/621d6a3effc5849b.jpg' },
+    { id: 5, image: 'https://qiniu.minishop.cool/9340e04d976835c8.jpg' },
+    { id: 6, image: 'https://qiniu.minishop.cool/748106b5052d5a64.png' },
+    { id: 7, image: 'https://qiniu.minishop.cool/e37cd1da7f1c264a.jpg' }
+  ]
+
+  private getCategory () {
+    getCategoryTopTen().then(res => {
+      console.log(res)
+    })
+  }
+
+  created () {
+    this.getCategory()
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+  .home-page {
+    background-color: #fff;
+    .address-and-switch {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 12px 10px 12px;
+      .address {
+        display: flex;
+        justify-self: flex-start;
+        align-items: center;
+        color: #666;
+        font-size: 13px;
+      }
+      .switch-btn {
+        width: 98px;
+        height: 26px;
+        line-height: 26px;
+        border: 1px solid #ef8e48;
+        border-radius: 28px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        font-size: 14px;
+        color: #ef8e48;
+        span {
+          width: 49px;
+          height: 26px;
+          border-radius: 28px;
+          display: inline-block;
+          text-align: center;
+          &.active {
+            background-color: #ef8e48;
+            color: #fff;
+          }
+        }
+      }
+    }
+    .swipe {
+      width: 100%;
+      height: 117px;
+      .van-swipe-item {
+        width: 100%;
+        height: 100%;
+        .van-image {
+          width: 100%;
+          height: 100%;
+        }
+      }
+    }
+  }
+</style>
