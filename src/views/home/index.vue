@@ -11,8 +11,8 @@
           <van-icon name="location-o" /> 鲁谷路6号店自提点 <van-icon name="arrow" />
         </span>
         <div class="switch-btn">
-          <span class="active">自提</span>
-          <span>外送</span>
+          <span :class="{ 'active': switchVal === 1 }" @click="switchVal = 1">自提</span>
+          <span :class="{ 'active': switchVal === 2 }" @click="switchVal = 2">外送</span>
         </div>
       </div>
     </van-sticky>
@@ -21,6 +21,32 @@
         <van-image lazy-load :src="item.image" />
       </van-swipe-item>
     </van-swipe>
+    <div class="tips">
+      <span>
+        <van-image lazy-load :src="require('@/assets/icon1.png')" /> 品质囤货
+      </span>
+      <span>
+        <van-image lazy-load :src="require('@/assets/icon2.png')" /> 畅享低价
+      </span>
+      <span>
+        <van-image lazy-load :src="require('@/assets/icon3.png')" /> 自营配送
+      </span>
+      <span>
+        <van-image lazy-load :src="require('@/assets/icon4.png')" /> 会员返现
+      </span>
+    </div>
+    <div class="seckill">
+      <div class="title">
+        <h1>蜂超市1元菜场</h1>
+        <span>新鲜便宜次日达</span>
+      </div>
+    </div>
+    <div class="category">
+      <div class="item" v-for="item in category" :key="item.id">
+        <van-image lazy-load :src="item.icon" />
+        <span>{{ item.name }}</span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -31,9 +57,9 @@ import { getCategoryTopTen } from '@/api/index'
 @Component({
   name: 'Home'
 })
-
 export default class extends Vue {
   private keywords = ''
+  private switchVal = 1
   private swiperList = [
     { id: 1, image: 'https://qiniu.minishop.cool/7a9ba20bfc606abe.jpg' },
     { id: 2, image: 'https://qiniu.minishop.cool/24f604f4462a5036.png' },
@@ -44,9 +70,11 @@ export default class extends Vue {
     { id: 7, image: 'https://qiniu.minishop.cool/e37cd1da7f1c264a.jpg' }
   ]
 
+  private category = []
+
   private getCategory () {
     getCategoryTopTen().then(res => {
-      console.log(res)
+      this.category = res.data
     })
   }
 
@@ -64,6 +92,7 @@ export default class extends Vue {
       justify-content: space-between;
       align-items: center;
       padding: 0 12px 10px 12px;
+      background-color: #fff;
       .address {
         display: flex;
         justify-self: flex-start;
@@ -104,6 +133,72 @@ export default class extends Vue {
         .van-image {
           width: 100%;
           height: 100%;
+        }
+      }
+    }
+    .tips {
+      height: 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #fdf6ee;
+      margin: 10px 14px;
+      border-radius: 6px;
+      padding: 0 8px;
+      span {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #ee7b4c;
+        font-size: 12px;
+        .van-image {
+          width: 16px;
+          height: 16px;
+          margin-right: 3px;
+        }
+      }
+    }
+    .seckill {
+      margin: 0 12px;
+      width: calc(100% - 24px);
+      height: 188px;
+      background-image: url('~@/assets/seckill_bg.png');
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+      .title {
+        padding: 12px 14px;
+        h1 {
+          font-size: 16px;
+          margin: 6px 0;
+          color: #3a7421;
+          display: inline-block;
+        }
+        span {
+          font-size: 12px;
+          color: #59923f;
+          margin-left: 10px;
+        }
+      }
+    }
+    .category {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      padding: 10px 12px;
+      .item {
+        width: 20%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-size: 12px;
+        color: #373737;
+        .van-image {
+          width: 40px;
+        }
+        span {
+          margin: 8px 0;
         }
       }
     }

@@ -1,0 +1,7 @@
+.van-sidebar-item--select {
+  background-color: #fff !important;
+  color: #ef8e48 !important;
+  &::before {
+    background-color: #ef8e48;
+  }
+}

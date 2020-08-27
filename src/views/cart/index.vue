@@ -8,7 +8,6 @@ import { Vue, Component } from 'vue-property-decorator'
 @Component({
   name: 'Cart'
 })
-
 export default class extends Vue {}
 
 </script>

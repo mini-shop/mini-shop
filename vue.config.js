@@ -1,7 +1,8 @@
-import merge = require('webpack-merge')
-import autoprefixer = require('autoprefixer')
-import pxtoviewport = require('postcss-px-to-viewport')
-import tsImportPluginFactory = require('ts-import-plugin')
+/* eslint-disable @typescript-eslint/no-var-requires */
+const merge = require('webpack-merge')
+const autoprefixer = require('autoprefixer')
+const pxtoviewport = require('postcss-px-to-viewport')
+const tsImportPluginFactory = require('ts-import-plugin')
 
 module.exports = {
   publicPath: './',
@@ -10,7 +11,7 @@ module.exports = {
   lintOnSave: process.env.NODE_ENV === 'development',
   productionSourceMap: false,
   devServer: {
-    port: 10086,
+    port: 10010,
     open: true,
     overlay: {
       warnings: false,
