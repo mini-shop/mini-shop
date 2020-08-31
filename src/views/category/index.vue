@@ -33,6 +33,7 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import { getCategory, getProductList } from '@/api/index'
+import { ICategory } from '@/api/types'
 
 @Component({
   name: 'Category'
@@ -48,7 +49,7 @@ export default class extends Vue {
   private activeCategoryIndex = 0
   private activeSubCategory = 0
 
-  private categoryList = []
+  private categoryList: ICategory[] = []
   private productList = []
   private categoryId = 0
 
@@ -89,7 +90,7 @@ export default class extends Vue {
     })
   }
 
-  private selectCategory (currentIndex: number, category: Object) {
+  private selectCategory (currentIndex: number, category: ICategory) {
     this.activeCategoryIndex = currentIndex
     this.categoryId = category.id
     this.getProduct()
