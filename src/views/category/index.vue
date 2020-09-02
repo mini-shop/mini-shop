@@ -15,17 +15,22 @@
       <van-sidebar v-model="activeSubCategory" v-if="sidebarMenu && sidebarMenu.children" @change="getProductById">
         <van-sidebar-item v-for="item in sidebarMenu.children" :key="item.id" :title="item.name" />
       </van-sidebar>
-      <div class="product">
-        <van-card
-          v-for="item in productList"
-          :key="item.code"
-          :tag="item.label"
-          :price="item.price"
-          :desc="item.promotion"
-          :title="item.name"
-          :thumb="item.image"
-          :origin-price="item.originPrice" />
-      </div>
+      <van-list
+        class="product"
+        v-model="loading"
+        :finished="finished"
+        finished-text="没有更多了"
+        @load="getProduct">
+          <van-card
+            v-for="item in productList"
+            :key="item.code"
+            :tag="item.label"
+            :price="item.price"
+            :desc="item.promotion"
+            :title="item.name"
+            :thumb="item.image"
+            :origin-price="item.originPrice" />
+      </van-list>
     </div>
   </div>
 </template>
@@ -33,7 +38,7 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import { getCategory, getProductList } from '@/api/index'
-import { ICategory } from '@/api/types'
+import { ICategory, IProduct } from '@/api/types'
 
 @Component({
   name: 'Category'
@@ -50,10 +55,17 @@ export default class extends Vue {
   private activeSubCategory = 0
 
   private categoryList: ICategory[] = []
-  private productList = []
+  private productList: IProduct[] = []
   private categoryId = 0
+  private loading = false
+  private finished = false
 
-  private get sidebarMenu () {
+  private page = {
+    pageSize: 10,
+    pageNum: 1
+  }
+
+  private get sidebarMenu () { // 给左侧分类添加全部分类选项
     const menu = this.categoryList[this.activeCategoryIndex]
     if (menu.children[0].code !== menu.code) {
       menu.children.unshift({
@@ -67,38 +79,47 @@ export default class extends Vue {
     return menu
   }
 
-  private getAllCategory () {
+  private getAllCategory () { // 获取全部分类
     getCategory().then(res => {
       this.categoryList = res.data
       this.categoryId = this.categoryList[0].id
     })
   }
 
-  private getProductById () {
+  private getProductById () { // 点击左侧分类
     this.categoryId = this.sidebarMenu.children[this.activeSubCategory].id
-    this.getProduct()
+    this.finished = false
+    this.page.pageNum = 1
+    this.productList = []
   }
 
-  private getProduct () {
+  private getProduct () { // 根据分类id获取商品列表
     const params = {
       categoryId: this.categoryId,
-      pageSize: 10,
-      pageNum: 1
+      pageSize: this.page.pageSize,
+      pageNum: this.page.pageNum
     }
     getProductList(params).then(res => {
-      this.productList = res.data.list
+      this.loading = false
+      const { list, totalPage } = res.data
+      this.productList = [...this.productList, ...list]
+      if (totalPage === 0 || this.page.pageNum === totalPage) {
+        this.finished = true
+      }
+      this.page.pageNum++
     })
   }
 
-  private selectCategory (currentIndex: number, category: ICategory) {
+  private selectCategory (currentIndex: number, category: ICategory) { // 点击顶部一级分类
     this.activeCategoryIndex = currentIndex
     this.categoryId = category.id
-    this.getProduct()
+    this.finished = false
+    this.page.pageNum = 1
+    this.productList = []
   }
 
   created () {
     this.getAllCategory()
-    this.getProduct()
   }
 }
 </script>
@@ -137,6 +158,7 @@ export default class extends Vue {
           background-color: #fff;
           margin-top: 3px;
           border-radius: 4px;
+          text-align: center;
         }
         &.active {
           .van-image {
@@ -145,7 +167,6 @@ export default class extends Vue {
           span {
             background-color: #ef8e48;
             color: #fff;
-            text-align: center;
           }
         }
       }
@@ -165,6 +186,9 @@ export default class extends Vue {
       }
       .product {
         flex: 1;
+        .van-list {
+          height: auto;
+        }
       }
     }
   }
