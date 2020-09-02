@@ -42,7 +42,7 @@
       </div>
     </div>
     <div class="category">
-      <div class="item" v-for="item in category" :key="item.id">
+      <div class="item" v-for="item in category" :key="item.code">
         <van-image lazy-load :src="item.icon" />
         <span>{{ item.name }}</span>
       </div>
@@ -52,7 +52,7 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import { getCategoryTopTen } from '@/api/index'
+import { getSwiper, getCategoryTopTen } from '@/api/index'
 
 @Component({
   name: 'Home'
@@ -60,25 +60,22 @@ import { getCategoryTopTen } from '@/api/index'
 export default class extends Vue {
   private keywords = ''
   private switchVal = 1
-  private swiperList = [
-    { id: 1, image: 'https://pan.zhangtong.work/minishop/swiper/7a9ba20bfc606abe.jpg' },
-    { id: 2, image: 'https://pan.zhangtong.work/minishop/swiper/24f604f4462a5036.png' },
-    { id: 3, image: 'https://pan.zhangtong.work/minishop/swiper/95bb119bcf5aca5b.jpg' },
-    { id: 4, image: 'https://pan.zhangtong.work/minishop/swiper/621d6a3effc5849b.jpg' },
-    { id: 5, image: 'https://pan.zhangtong.work/minishop/swiper/9340e04d976835c8.jpg' },
-    { id: 6, image: 'https://pan.zhangtong.work/minishop/swiper/748106b5052d5a64.png' },
-    { id: 7, image: 'https://pan.zhangtong.work/minishop/swiper/e37cd1da7f1c264a.jpg' }
-  ]
+  private swiperList = []
 
   private category = []
 
-  private getCategory () {
-    getCategoryTopTen().then(res => {
-      this.category = res.data
-    })
+  private async getSwiper () { // 获取轮播图
+    const { data } = await getSwiper()
+    this.swiperList = data
+  }
+
+  private async getCategory () { // 获取一级分类前十
+    const { data } = await getCategoryTopTen()
+    this.category = data
   }
 
   created () {
+    this.getSwiper()
     this.getCategory()
   }
 }

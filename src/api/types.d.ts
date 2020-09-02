@@ -1,10 +1,9 @@
 export interface ICategory {
-  id: number,
-  code: string,
+  code: number,
   sort: number,
   name: string,
   icon: string,
-  parentCode: string,
+  parentCode: number,
   titleImage: string,
   children: Array
 }
@@ -15,7 +14,6 @@ export interface IProduct {
   image: string,
   price: number,
   originPrice: number,
-  brand: string,
   label: string,
   inventory: number,
   soldNum: number,

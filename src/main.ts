@@ -9,6 +9,7 @@ import './styles/index.scss'
 
 Vue.use(VueAwesomeSwiper)
 
+
 Vue.config.productionTip = false
 
 new Vue({
