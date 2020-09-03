@@ -12,7 +12,9 @@ import {
   Sidebar,
   SidebarItem,
   Card,
-  List
+  List,
+  Divider,
+  Loading
 } from 'vant'
 import '@vant/touch-emulator'
 import 'vant/lib/index.css'
@@ -29,3 +31,5 @@ Vue.use(Sidebar)
 Vue.use(SidebarItem)
 Vue.use(Card)
 Vue.use(List)
+Vue.use(Divider)
+Vue.use(Loading)

@@ -54,10 +54,8 @@
 import { Vue, Component } from 'vue-property-decorator'
 import { getSwiper, getCategoryTopTen } from '@/api/index'
 
-@Component({
-  name: 'Home'
-})
-export default class extends Vue {
+@Component
+export default class Home extends Vue {
   private keywords = ''
   private switchVal = 1
   private swiperList = []

@@ -13,10 +13,8 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 
-@Component({
-  name: 'App'
-})
-export default class extends Vue {
+@Component
+export default class App extends Vue {
   private active = 0
 }
 </script>
