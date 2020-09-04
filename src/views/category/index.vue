@@ -167,7 +167,8 @@ export default class Category extends Vue {
       this.scroll = new BScroll(this.productRef, {
         scrollY: true,
         scrollbar: true,
-        pullUpLoad: true
+        pullUpLoad: true,
+        click: true
       })
       this.scroll.on('pullingUp', this.getProduct)
     })

@@ -14,7 +14,8 @@ import {
   Card,
   List,
   Divider,
-  Loading
+  Loading,
+  NavBar
 } from 'vant'
 import '@vant/touch-emulator'
 import 'vant/lib/index.css'
@@ -33,3 +34,4 @@ Vue.use(Card)
 Vue.use(List)
 Vue.use(Divider)
 Vue.use(Loading)
+Vue.use(NavBar)

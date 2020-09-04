@@ -1,5 +1,6 @@
 <template>
-  <div class="product-detail-page">
+  <div class="product-detail-page" v-if="showPage">
+    <van-icon class="back-btn" name="arrow-left" color="#fff" @click="$router.go(-1)" />
     <van-swipe @change="onChange">
       <van-swipe-item v-for="item in detail.shopImages" :key="item">
         <van-image :src="item"></van-image>
@@ -21,7 +22,7 @@
       <div class="name">
         <span>{{ detail.promotion ? `【${detail.promotion}】` : '' }}{{ detail.name }}</span>
         <span>
-          <van-icon name="share" color="#eb6c11" />
+          <van-icon name="share" color="#eb6c11" size="20" />
           分享
         </span>
       </div>
@@ -51,6 +52,11 @@ import { getProductDetail } from '@/api/index'
 
 @Component
 export default class ProductDetail extends Vue {
+  private current = 0
+  private propKeys: string[] = []
+  private propKey = ''
+  private showPage = false
+
   private detail: IProduct.Detail = {
     code: '',
     name: '',
@@ -68,14 +74,11 @@ export default class ProductDetail extends Vue {
     pintuanmsg: '',
     cartMsg: ''
   }
-  private current = 0
-  private propKeys: string[] = []
-  private propKey = ''
-  private showPage = false
 
   private async getDetail () {
     const { data } = await getProductDetail({ code: this.$route.params.code })
     this.detail = data
+    this.showPage = true
     this.propKeys = Object.keys(this.detail.properties)
   }
 
@@ -84,12 +87,13 @@ export default class ProductDetail extends Vue {
   }
 
   private propName (name: string) {
+    // eslint-disable-next-line
     const propNames: any = {
-      'originPlace': '产地',
-      'unitName': '单位',
-      'netVol': '净含量',
-      'expireDate': '保质期',
-      'storeCondition': '贮存方式'
+      originPlace: '产地',
+      unitName: '单位',
+      netVol: '净含量',
+      expireDate: '保质期',
+      storeCondition: '贮存方式'
     }
     return propNames[name]
   }
@@ -102,7 +106,20 @@ export default class ProductDetail extends Vue {
 
 <style lang="scss" scoped>
   .product-detail-page {
+    position: relative;
     background-color: #e6e6e6;
+    .back-btn {
+      width: 26px;
+      height: 26px;
+      line-height: 26px;
+      border-radius: 50%;
+      text-align: center;
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      background: rgba(0, 0, 0, 0.3);
+      z-index: 999;
+    }
     .van-swipe {
       background-color: #fff;
       border-bottom: 2px solid #f3f3f3;
@@ -289,9 +306,9 @@ export default class ProductDetail extends Vue {
       }
       .img-wrap {
         margin: 10px 0;
-        .van-image {
-
-        }
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
       }
     }
   }
