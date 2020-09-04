@@ -19,18 +19,27 @@
         <div class="right">已售{{ detail.soldNum }}件</div>
       </div>
       <div class="name">
-        <span>{{ detail.name }}</span>
-        <span>分享</span>
+        <span>{{ detail.promotion ? `【${detail.promotion}】` : '' }}{{ detail.name }}</span>
+        <span>
+          <van-icon name="share" color="#eb6c11" />
+          分享
+        </span>
       </div>
       <div class="msg">{{ detail.pintuanmsg }}</div>
     </div>
     <div class="props">
       <label>商品信息</label>
       <div class="prop-table">
-        <!-- <div v-for="item in propKeys" :key="item">
+        <div v-for="item in propKeys" :key="item">
           <span>{{ propName(item) }}</span>
-          <span>{{ this.detail.properties[item] }}</span>
-        </div> -->
+          <span>{{ detail.properties[item] }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="detail-img">
+      <label>商品详情</label>
+      <div class="img-wrap">
+        <van-image v-for="item in detail.detailImages" :key="item" :src="item"></van-image>
       </div>
     </div>
   </div>
@@ -42,34 +51,47 @@ import { getProductDetail } from '@/api/index'
 
 @Component
 export default class ProductDetail extends Vue {
-  private detail = {}
+  private detail: IProduct.Detail = {
+    code: '',
+    name: '',
+    shopImages: [],
+    price: 0,
+    originPrice: 0,
+    label: '',
+    inventory: 0,
+    soldNum: 0,
+    promotion: '',
+    promotionTag: '',
+    promotionTitle: '',
+    properties: {},
+    detailImages: [],
+    pintuanmsg: '',
+    cartMsg: ''
+  }
   private current = 0
   private propKeys: string[] = []
-  private propKey: any
+  private propKey = ''
+  private showPage = false
 
   private async getDetail () {
-    const { data } = await getProductDetail({ code: '87050408' })
-    this.detail = { ...data, shopImages: JSON.parse(data.shopImages), properties: JSON.parse(data.properties), detailImages: JSON.parse(data.detailImages) }
-    this.propKeys = Object.keys(JSON.parse(data.properties))
+    const { data } = await getProductDetail({ code: this.$route.params.code })
+    this.detail = data
+    this.propKeys = Object.keys(this.detail.properties)
   }
 
   private onChange (index: number) {
     this.current = index
   }
 
-  private get propName (): string {
-    const propNames = {
-      originPlace: '产地',
-      unitName: '单位',
-      netVol: '净含量',
-      expireDate: '保质期',
-      storeCondition: '贮存方式'
+  private propName (name: string) {
+    const propNames: any = {
+      'originPlace': '产地',
+      'unitName': '单位',
+      'netVol': '净含量',
+      'expireDate': '保质期',
+      'storeCondition': '贮存方式'
     }
-    return propNames[this.propKey]
-  }
-
-  private set propName (prop: string) {
-    this.propKey = prop
+    return propNames[name]
   }
 
   created () {
@@ -82,7 +104,7 @@ export default class ProductDetail extends Vue {
   .product-detail-page {
     background-color: #e6e6e6;
     .van-swipe {
-      height: 380px;
+      background-color: #fff;
       border-bottom: 2px solid #f3f3f3;
       .van-swipe-item {
         display: flex;
@@ -90,12 +112,18 @@ export default class ProductDetail extends Vue {
         align-items: center;
       }
       .custom-indicator {
+        width: 36px;
+        height: 18px;
+        line-height: 18px;
+        border-radius: 18px;
+        text-align: center;
         position: absolute;
-        right: 5px;
-        bottom: 5px;
+        right: 14px;
+        bottom: 14px;
         padding: 2px 5px;
         font-size: 12px;
-        background: rgba(0, 0, 0, 0.1);
+        color: #fff;
+        background: rgba(0, 0, 0, 0.3);
       }
     }
     .info {
@@ -148,6 +176,10 @@ export default class ProductDetail extends Vue {
             text-align: center;
             color: #ababab;
             font-size: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
           }
         }
       }
@@ -177,15 +209,89 @@ export default class ProductDetail extends Vue {
     .props {
       background-color: #fff;
       margin-top: 10px;
-      padding-top: 18px;
+      padding-top: 14px;
+      padding-bottom: 14px;
       label {
-        height: 14px;
+        height: 22px;
+        line-height: 22px;
         display: inline-block;
-        border-left: 3px solid #ed7e2e;
         font-size: 14px;
+        font-weight: 700;
         color: #4f4f4f;
-        line-height: 14px;
         padding-left: 12px;
+        position: relative;
+        &::before {
+          content: '';
+          display: block;
+          position: absolute;
+          left: 0;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 3px;
+          height: 14px;
+          background-color: #ed7e2e;
+        }
+      }
+      .prop-table {
+        width: calc(100% - 30px);
+        margin: 10px 14px;
+        border: 1px solid #f8f8f8;
+        div {
+          &:not(:last-child) {
+            border-bottom: 1px solid #f8f8f8;
+          }
+          display: flex;
+          height: 39px;
+          line-height: 39px;
+          font-size: 14px;
+          span {
+            &:nth-child(1) {
+              width: 110px;
+              display: inline-block;
+              padding-left: 15px;
+              color: #9b9b9b;
+            }
+            &:nth-child(2) {
+              flex: 1;
+              display: inline-block;
+              padding-left: 15px;
+              color: #424242;
+            }
+          }
+        }
+      }
+    }
+    .detail-img {
+      background-color: #fff;
+      margin-top: 10px;
+      padding-top: 14px;
+      padding-bottom: 14px;
+      label {
+        height: 22px;
+        line-height: 22px;
+        display: inline-block;
+        font-size: 14px;
+        font-weight: 700;
+        color: #4f4f4f;
+        padding-left: 12px;
+        position: relative;
+        &::before {
+          content: '';
+          display: block;
+          position: absolute;
+          left: 0;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 3px;
+          height: 14px;
+          background-color: #ed7e2e;
+        }
+      }
+      .img-wrap {
+        margin: 10px 0;
+        .van-image {
+
+        }
       }
     }
   }

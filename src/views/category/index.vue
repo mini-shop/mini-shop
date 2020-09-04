@@ -25,7 +25,8 @@
             :desc="item.promotion"
             :title="item.name"
             :thumb="item.image"
-            :origin-price="item.originPrice" />
+            :origin-price="item.originPrice"
+            @click="showDetail(item.code)" />
           <div class="pullup-tips">
             <template v-if="!noMore">
               <div v-if="!loading" class="before-trigger">
@@ -131,6 +132,10 @@ export default class Category extends Vue {
     this.noMore = false
     this.getProduct()
     this.scroll && this.scroll.scrollTo(0, 0)
+  }
+
+  private showDetail (code: string) {
+    this.$router.push(`/productDetail/${code}`)
   }
 
   private async getProduct () { // 根据分类id获取商品列表
