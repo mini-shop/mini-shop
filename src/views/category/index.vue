@@ -119,7 +119,8 @@ export default class Category extends Vue {
     this.getProductListParams.pageNum = 1
     this.productList = []
     this.noMore = false
-    this.getProduct()
+    console.log(this.scroll)
+    this.scroll.autoPullUpLoad()
     this.scroll && this.scroll.scrollTo(0, 0)
   }
 
@@ -130,7 +131,7 @@ export default class Category extends Vue {
     this.getProductListParams.pageNum = 1
     this.productList = []
     this.noMore = false
-    this.getProduct()
+    this.scroll.autoPullUpLoad()
     this.scroll && this.scroll.scrollTo(0, 0)
   }
 
