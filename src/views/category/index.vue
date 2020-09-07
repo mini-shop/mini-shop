@@ -15,7 +15,7 @@
       <van-sidebar v-model="currentSubCategory" v-if="sidebarMenu" @change="getProductByCode">
         <van-sidebar-item v-for="item in sidebarMenu" :key="item.code" :title="item.name" />
       </van-sidebar>
-      <div class="product" ref="productWrapper">
+      <div class="product" ref="productWrapper" style="height: 480px;">
         <div class="product-content">
           <van-card
             v-for="item in productList"
@@ -77,7 +77,7 @@ export default class Category extends Vue {
   private getProductListParams: IProduct.ListParams = {
     categoryCode: 0,
     isAll: true,
-    pageSize: 10,
+    pageSize: 15,
     pageNum: 1
   }
 
@@ -87,7 +87,7 @@ export default class Category extends Vue {
   private async getAllCategory () { // 获取全部分类
     const { data } = await getCategory()
     this.categoryList = data
-    this.getProductListParams.categoryCode = this.sidebarMenu[this.currentSubCategory].code
+    this.getProductListParams.categoryCode = 9
     this.getProduct()
   }
 
@@ -119,8 +119,7 @@ export default class Category extends Vue {
     this.getProductListParams.pageNum = 1
     this.productList = []
     this.noMore = false
-    console.log(this.scroll)
-    this.scroll.autoPullUpLoad()
+    this.getProduct()
     this.scroll && this.scroll.scrollTo(0, 0)
   }
 
@@ -131,7 +130,7 @@ export default class Category extends Vue {
     this.getProductListParams.pageNum = 1
     this.productList = []
     this.noMore = false
-    this.scroll.autoPullUpLoad()
+    this.getProduct()
     this.scroll && this.scroll.scrollTo(0, 0)
   }
 
