@@ -87,8 +87,9 @@ export default class Category extends Vue {
   private async getAllCategory () { // 获取全部分类
     const { data } = await getCategory()
     this.categoryList = data
-    this.getProductListParams.categoryCode = this.sidebarMenu[this.currentSubCategory].code
-    this.getProduct()
+    this.getProductListParams.categoryCode = 9
+    // this.getProductListParams.categoryCode = this.sidebarMenu[this.currentSubCategory].code
+    await this.getProduct()
   }
 
   private get sidebarMenu (): ICategory.Sub[] { // 获取二级分类
@@ -143,35 +144,41 @@ export default class Category extends Vue {
       this.loading = true
       const { data: { list, totalPage } } = await getProductList(this.getProductListParams)
       this.productList = [...this.productList, ...list]
-      this.scroll.refresh()
-      if (list.length === 0 || this.getProductListParams.pageNum >= totalPage) {
-        this.noMore = true
-        this.scroll && this.scroll.closePullUp()
+      if (this.scroll) {
+        if (list.length === 0 || this.getProductListParams.pageNum >= totalPage) {
+          this.noMore = true
+          this.scroll.closePullUp()
+          this.scroll.refresh()
+        } else {
+          this.scroll.finishPullUp()
+          this.scroll.refresh()
+          this.loading = false
+          this.getProductListParams.pageNum++
+        }
       } else {
-        this.loading = false
-        this.getProductListParams.pageNum++
+        if (list.length === 0 || this.getProductListParams.pageNum >= totalPage) {
+          this.noMore = true
+        } else {
+          this.getProductListParams.pageNum++
+          this.$nextTick(() => {
+            this.scroll = new BScroll(this.productRef, {
+              scrollY: true,
+              scrollbar: true,
+              pullUpLoad: true,
+              click: true
+            })
+            this.scroll.on('pullingUp', this.getProduct)
+            this.scroll.refresh()
+          })
+        }
       }
     } catch (e) {
       console.log(e)
-    } finally {
-      !this.noMore && this.scroll && this.scroll.finishPullUp()
     }
   }
 
-  created () {
-    this.getAllCategory()
-  }
-
-  mounted () {
-    this.$nextTick(() => {
-      this.scroll = new BScroll(this.productRef, {
-        scrollY: true,
-        scrollbar: true,
-        pullUpLoad: true,
-        click: true
-      })
-      this.scroll.on('pullingUp', this.getProduct)
-    })
+  async created () {
+    await this.getAllCategory()
   }
 }
 </script>
