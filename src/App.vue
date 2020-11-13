@@ -1,6 +1,8 @@
 <template>
   <div id="app">
-    <router-view/>
+    <keep-alive>
+      <router-view :key="key"/>
+    </keep-alive>
     <van-tabbar v-model="active" route fixed placeholder active-color="#F18C43" v-if="showTabbar">
       <van-tabbar-item icon="home-o" to="/">首页</van-tabbar-item>
       <van-tabbar-item icon="apps-o" to="/category">分类</van-tabbar-item>
@@ -18,6 +20,10 @@ import { Route } from 'vue-router'
 export default class App extends Vue {
   private active = 0
   private showTabbar = true
+  
+  private get key () : string {
+    return this.$route.path
+  }
 
   @Watch('$route')
   onRouteChange (route: Route) {

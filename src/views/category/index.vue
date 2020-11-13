@@ -87,8 +87,7 @@ export default class Category extends Vue {
   private async getAllCategory () { // 获取全部分类
     const { data } = await getCategory()
     this.categoryList = data
-    this.getProductListParams.categoryCode = 9
-    // this.getProductListParams.categoryCode = this.sidebarMenu[this.currentSubCategory].code
+    this.getProductListParams.categoryCode = this.sidebarMenu[this.currentSubCategory].code
     await this.getProduct()
   }
 
@@ -121,7 +120,7 @@ export default class Category extends Vue {
     this.productList = []
     this.noMore = false
     this.getProduct()
-    this.scroll && this.scroll.scrollTo(0, 0)
+    this.scroll.scrollTo(0, 0)
   }
 
   private getProductByCode () { // 点击左侧分类
@@ -132,7 +131,7 @@ export default class Category extends Vue {
     this.productList = []
     this.noMore = false
     this.getProduct()
-    this.scroll && this.scroll.scrollTo(0, 0)
+    this.scroll.scrollTo(0, 0)
   }
 
   private showDetail (code: string) {
@@ -144,34 +143,17 @@ export default class Category extends Vue {
       this.loading = true
       const { data: { list, totalPage } } = await getProductList(this.getProductListParams)
       this.productList = [...this.productList, ...list]
-      if (this.scroll) {
-        if (list.length === 0 || this.getProductListParams.pageNum >= totalPage) {
-          this.noMore = true
-          this.scroll.closePullUp()
-          this.scroll.refresh()
-        } else {
-          this.scroll.finishPullUp()
-          this.scroll.refresh()
-          this.loading = false
-          this.getProductListParams.pageNum++
-        }
+      if (list.length === 0 || this.getProductListParams.pageNum >= totalPage) {
+        this.noMore = true
+        this.scroll.closePullUp()
       } else {
-        if (list.length === 0 || this.getProductListParams.pageNum >= totalPage) {
-          this.noMore = true
-        } else {
-          this.getProductListParams.pageNum++
-          this.$nextTick(() => {
-            this.scroll = new BScroll(this.productRef, {
-              scrollY: true,
-              scrollbar: true,
-              pullUpLoad: true,
-              click: true
-            })
-            this.scroll.on('pullingUp', this.getProduct)
-            this.scroll.refresh()
-          })
-        }
+        this.scroll.finishPullUp()
+        this.loading = false
+        this.getProductListParams.pageNum++
       }
+      this.$nextTick(() => {
+        this.scroll.refresh()
+      })
     } catch (e) {
       console.log(e)
     }
@@ -179,6 +161,18 @@ export default class Category extends Vue {
 
   async created () {
     await this.getAllCategory()
+  }
+  
+  mounted () {
+    this.$nextTick(() => {
+      this.scroll = new BScroll(this.productRef, {
+        scrollY: true,
+        scrollbar: true,
+        pullUpLoad: true,
+        click: true
+      })
+      this.scroll.on('pullingUp', this.getProduct)
+    })
   }
 }
 </script>
