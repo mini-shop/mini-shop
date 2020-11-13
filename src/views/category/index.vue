@@ -162,7 +162,7 @@ export default class Category extends Vue {
   async created () {
     await this.getAllCategory()
   }
-  
+
   mounted () {
     this.$nextTick(() => {
       this.scroll = new BScroll(this.productRef, {
