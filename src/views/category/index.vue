@@ -17,16 +17,8 @@
       </van-sidebar>
       <div class="product" ref="productWrapper" style="height: 480px;">
         <div class="product-content">
-          <van-card
-            v-for="item in productList"
-            :key="item.code"
-            :tag="item.label"
-            :price="item.price"
-            :desc="item.promotion"
-            :title="item.name"
-            :thumb="item.image"
-            :origin-price="item.originPrice"
-            @click="showDetail(item.code)" />
+          <shop-item v-for="item in productList" :key="item.code" :shop="item">
+          </shop-item>
           <div class="pullup-tips">
             <template v-if="!noMore">
               <div v-if="!loading" class="before-trigger">
@@ -52,11 +44,17 @@ import { getCategory, getProductList } from '@/api/index'
 import BScroll from '@better-scroll/core'
 import ScrollBar from '@better-scroll/scroll-bar'
 import Pullup from '@better-scroll/pull-up'
+import ShopItem from '@/components/ShopItem/index'
 
 BScroll.use(ScrollBar)
 BScroll.use(Pullup)
 
-@Component
+@Component({
+  name: 'Category',
+  components: {
+    ShopItem
+  }
+})
 export default class Category extends Vue {
   private keywords = ''
   private swiperOptions: object = {
