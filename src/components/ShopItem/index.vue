@@ -25,7 +25,7 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 @Component({
   name: 'ShopItem'
 })
-export default class ShopItem extends Vue {
+export default class extends Vue {
   @Prop()
   private shop!: IProduct.List
 

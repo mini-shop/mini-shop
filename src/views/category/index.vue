@@ -45,7 +45,7 @@ import { getCategory, getProductList } from '@/api/index'
 import BScroll from '@better-scroll/core'
 import ScrollBar from '@better-scroll/scroll-bar'
 import Pullup from '@better-scroll/pull-up'
-import ShopItem from '@/components/ShopItem/index'
+import ShopItem from '@/components/ShopItem'
 
 BScroll.use(ScrollBar)
 BScroll.use(Pullup)

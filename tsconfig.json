@@ -7,13 +7,12 @@
     "importHelpers": true,
     "moduleResolution": "node",
     "experimentalDecorators": true,
-    "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "strictPropertyInitialization": false,
     "sourceMap": true,
     "baseUrl": ".",
     "types": [
+      "node",
       "webpack-env"
     ],
     "paths": {
