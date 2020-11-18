@@ -15,9 +15,10 @@
       <van-sidebar v-model="currentSubCategory" v-if="sidebarMenu" @change="getProductByCode">
         <van-sidebar-item v-for="item in sidebarMenu" :key="item.code" :title="item.name" />
       </van-sidebar>
-      <div class="product" ref="productWrapper" style="height: 480px;">
+      <div class="product" ref="productWrapper">
         <div class="product-content">
-          <shop-item v-for="item in productList" :key="item.code" :shop="item">
+          <shop-item class="product-item" v-for="item in productList" :key="item.code" :shop="item" @click="showDetail(item.code)">
+            <van-icon class="add-cart" name="plus" />
           </shop-item>
           <div class="pullup-tips">
             <template v-if="!noMore">
@@ -133,6 +134,7 @@ export default class Category extends Vue {
   }
 
   private showDetail (code: string) {
+    console.log(code)
     this.$router.push(`/productDetail/${code}`)
   }
 
@@ -241,6 +243,25 @@ export default class Category extends Vue {
         height: 100%;
         overflow: hidden;
         position: relative;
+        .product-content {
+          width: calc(100% - 20px);
+          padding: 0 10px;
+          background-color: #fff;
+          .product-item {
+            border-top: 1px solid #f4f4f4;
+            .add-cart {
+              width: 22px;
+              height: 22px;
+              line-height: 22px;
+              text-align: center;
+              font-size: 18px;
+              background-color: #ef8e48;
+              color: #fff;
+              border-radius: 50%;
+              font-weight: 600;
+            }
+          }
+        }
       }
     }
   }

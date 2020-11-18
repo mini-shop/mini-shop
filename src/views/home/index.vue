@@ -42,7 +42,7 @@
       </div>
     </div>
     <div class="category">
-      <div class="item" v-for="item in category" :key="item.code">
+      <div class="item" v-for="item in category" :key="item.code" @click="jumpToCategory(item.code)">
         <van-image lazy-load :src="item.icon" />
         <span>{{ item.name }}</span>
       </div>
@@ -70,6 +70,11 @@ export default class Home extends Vue {
   private async getCategory () { // 获取一级分类前十
     const { data } = await getCategoryTopTen()
     this.category = data
+  }
+
+  private jumpToCategory (code: number) {
+    console.log(code)
+    this.$router.replace('/category')
   }
 
   created () {
