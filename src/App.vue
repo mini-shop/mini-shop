@@ -20,8 +20,8 @@ import { Route } from 'vue-router'
 export default class App extends Vue {
   private active = 0
   private showTabbar = true
-  
-  private get key () : string {
+
+  private get key (): string {
     return this.$route.path
   }
 

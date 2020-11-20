@@ -16,11 +16,7 @@
         </div>
       </div>
     </van-sticky>
-    <van-swipe class="swipe" :autoplay="3000" indicator-color="white">
-      <van-swipe-item v-for="item in swiperList" :key="item.id">
-        <van-image lazy-load :src="item.image" />
-      </van-swipe-item>
-    </van-swipe>
+    <swiper :list="swiperList"></swiper>
     <div class="tips">
       <span>
         <van-image lazy-load :src="require('@/assets/icon1.png')" /> 品质囤货
@@ -35,26 +31,26 @@
         <van-image lazy-load :src="require('@/assets/icon4.png')" /> 会员返现
       </span>
     </div>
-    <div class="seckill">
-      <div class="title">
-        <h1>蜂超市1元菜场</h1>
-        <span>新鲜便宜次日达</span>
-      </div>
-    </div>
-    <div class="category">
-      <div class="item" v-for="item in category" :key="item.code" @click="jumpToCategory(item.code)">
-        <van-image lazy-load :src="item.icon" />
-        <span>{{ item.name }}</span>
-      </div>
-    </div>
+    <seckill></seckill>
+    <menu :list="category"></menu>
   </div>
 </template>
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import { getSwiper, getCategoryTopTen } from '@/api/index'
+import Swiper from './components/Swiper/index.vue'
+import Seckill from './components/Seckill/index.vue'
+import Menu from './components/Menu/index.vue'
 
-@Component
+@Component({
+  name: 'Home',
+  components: {
+    Swiper,
+    Seckill,
+    Menu
+  }
+})
 export default class Home extends Vue {
   private keywords = ''
   private switchVal = 1
@@ -70,11 +66,6 @@ export default class Home extends Vue {
   private async getCategory () { // 获取一级分类前十
     const { data } = await getCategoryTopTen()
     this.category = data
-  }
-
-  private jumpToCategory (code: number) {
-    console.log(code)
-    this.$router.replace('/category')
   }
 
   created () {
@@ -124,18 +115,6 @@ export default class Home extends Vue {
         }
       }
     }
-    .swipe {
-      width: 100%;
-      height: 117px;
-      .van-swipe-item {
-        width: 100%;
-        height: 100%;
-        .van-image {
-          width: 100%;
-          height: 100%;
-        }
-      }
-    }
     .tips {
       height: 28px;
       display: flex;
@@ -155,50 +134,6 @@ export default class Home extends Vue {
           width: 16px;
           height: 16px;
           margin-right: 3px;
-        }
-      }
-    }
-    .seckill {
-      margin: 0 12px;
-      width: calc(100% - 24px);
-      height: 188px;
-      background-image: url('~@/assets/seckill_bg.png');
-      background-repeat: no-repeat;
-      background-size: 100% 100%;
-      .title {
-        padding: 12px 14px;
-        h1 {
-          font-size: 16px;
-          margin: 6px 0;
-          color: #3a7421;
-          display: inline-block;
-        }
-        span {
-          font-size: 12px;
-          color: #59923f;
-          margin-left: 10px;
-        }
-      }
-    }
-    .category {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      padding: 10px 12px;
-      .item {
-        width: 20%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        font-size: 12px;
-        color: #373737;
-        .van-image {
-          width: 40px;
-        }
-        span {
-          margin: 8px 0;
         }
       }
     }

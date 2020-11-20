@@ -6,13 +6,13 @@
       input-align="center"
       clearable />
     <swiper class="category-swipe" ref="categorySwiper" :options="swiperOptions">
-      <swiper-slide :class="{ 'active': currentCategoryIndex === index }" v-for="(item, index) in categoryList" :key="item.code">
-        <van-image lazy-load :src="item.icon" @click="selectCategory(index, item.code)" />
+      <swiper-slide :class="{ 'active': swiperMenuIndex === index }" v-for="(item, index) in categoryList" :key="item.code">
+        <van-image lazy-load :src="item.icon" @click="handleSwiperMenuClick(index)" />
         <span>{{ item.name }}</span>
       </swiper-slide>
     </swiper>
     <div class="category-content">
-      <van-sidebar v-model="currentSubCategory" v-if="sidebarMenu" @change="getProductByCode">
+      <van-sidebar v-model="sidebarMenuIndex" v-if="sidebarMenu" @change="handleSidebarMenuChange">
         <van-sidebar-item v-for="item in sidebarMenu" :key="item.code" :title="item.name" />
       </van-sidebar>
       <div class="product" ref="productWrapper">
@@ -45,7 +45,7 @@ import { getCategory, getProductList } from '@/api/index'
 import BScroll from '@better-scroll/core'
 import ScrollBar from '@better-scroll/scroll-bar'
 import Pullup from '@better-scroll/pull-up'
-import ShopItem from '@/components/ShopItem'
+import ShopItem from '@/components/ShopItem/index.vue'
 
 BScroll.use(ScrollBar)
 BScroll.use(Pullup)
@@ -64,16 +64,15 @@ export default class Category extends Vue {
     freeMode: true
   }
 
-  private currentCategoryIndex = 0
-  private currentSubCategory = 0
-  private categoryList: ICategory.Main[] = []
+  private swiperMenuIndex = 0
+  private sidebarMenuIndex = 0
+  private categoryList: ICategory[] = []
   private productList: IProduct.List[] = []
-  private currentCategory = 1
   private loading = false
   private scroll: BScroll
   private noMore = false
 
-  private getProductListParams: IProduct.ListParams = {
+  private params: IProduct.ListParams = {
     categoryCode: 0,
     isAll: true,
     pageSize: 15,
@@ -83,16 +82,24 @@ export default class Category extends Vue {
   @Ref('productWrapper')
   readonly productRef!: HTMLDivElement
 
-  private async getAllCategory () { // 获取全部分类
+  /**
+   * 获取顶部菜单
+   * @private
+   */
+  private async getAllCategory () {
     const { data } = await getCategory()
     this.categoryList = data
-    this.getProductListParams.categoryCode = this.sidebarMenu[this.currentSubCategory].code
-    await this.getProduct()
+    const { code } = this.sidebarMenu[this.sidebarMenuIndex]
+    await this.getProduct(code)
   }
 
-  private get sidebarMenu (): ICategory.Sub[] { // 获取二级分类
+  /**
+   * 获取左侧菜单
+   * @private
+   */
+  private get sidebarMenu (): ISubCategory[] { // 获取二级分类
     if (this.categoryList.length > 0) {
-      let { code, children } = this.categoryList[this.currentCategoryIndex]
+      let { code, children } = this.categoryList[this.swiperMenuIndex]
       if (children[0].code !== code) {
         children = [
           {
@@ -110,46 +117,58 @@ export default class Category extends Vue {
     }
   }
 
-  private selectCategory (index: number, code: number) { // 点击顶部一级分类
-    this.currentCategoryIndex = index
-    this.currentSubCategory = 0
-    this.getProductListParams.categoryCode = code
-    this.getProductListParams.isAll = true
-    this.getProductListParams.pageNum = 1
+  /**
+   * 顶部菜单点击切换
+   * @param index, code
+   * @private
+   */
+  private handleSwiperMenuClick (index: number) {
+    this.swiperMenuIndex = index
+    this.sidebarMenuIndex = 0
+    this.handleSidebarMenuChange()
+  }
+
+  /**
+   * 左侧菜单点击切换
+   * @private
+   */
+  private handleSidebarMenuChange () {
+    const { code, parentCode } = this.sidebarMenu[this.sidebarMenuIndex]
+    this.params.isAll = parentCode === 0
+    this.params.pageNum = 1
     this.productList = []
     this.noMore = false
-    this.getProduct()
+    this.getProduct(code)
     this.scroll.scrollTo(0, 0)
   }
 
-  private getProductByCode () { // 点击左侧分类
-    const { code, parentCode } = this.sidebarMenu[this.currentSubCategory]
-    this.getProductListParams.categoryCode = code
-    this.getProductListParams.isAll = parentCode === 0
-    this.getProductListParams.pageNum = 1
-    this.productList = []
-    this.noMore = false
-    this.getProduct()
-    this.scroll.scrollTo(0, 0)
-  }
-
+  /**
+   * 跳转商品详情
+   * @param code
+   * @private
+   */
   private showDetail (code: string) {
-    console.log(code)
     this.$router.push(`/productDetail/${code}`)
   }
 
-  private async getProduct () { // 根据分类id获取商品列表
+  /**
+   * 获取商品列表
+   * @param categoryCode
+   * @private
+   */
+  private async getProduct (categoryCode: number) {
+    this.params.categoryCode = categoryCode || this.params.categoryCode
     try {
       this.loading = true
-      const { data: { list, totalPage } } = await getProductList(this.getProductListParams)
+      const { data: { list, totalPage } } = await getProductList(this.params)
       this.productList = [...this.productList, ...list]
-      if (list.length === 0 || this.getProductListParams.pageNum >= totalPage) {
+      if (list.length === 0 || this.params.pageNum >= totalPage) {
         this.noMore = true
         this.scroll.closePullUp()
       } else {
         this.scroll.finishPullUp()
         this.loading = false
-        this.getProductListParams.pageNum++
+        this.params.pageNum++
       }
       this.$nextTick(() => {
         this.scroll.refresh()
