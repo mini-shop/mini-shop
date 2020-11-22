@@ -22,7 +22,7 @@ declare namespace IProduct {
   export interface Detail {
     code: string,
     name: string,
-    shopImages: Array,
+    shopImages: Array<string>,
     price: number,
     originPrice: number,
     label: string,
@@ -32,7 +32,7 @@ declare namespace IProduct {
     promotionTag: string,
     promotionTitle: string,
     properties: Object,
-    detailImages: Array,
+    detailImages: Array<string>,
     pintuanmsg: string,
     cartMsg: string
   }

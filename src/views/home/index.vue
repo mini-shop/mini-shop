@@ -32,7 +32,7 @@
       </span>
     </div>
     <seckill></seckill>
-    <menu :list="category"></menu>
+    <category-menu :list="category"></category-menu>
   </div>
 </template>
 
@@ -41,14 +41,14 @@ import { Vue, Component } from 'vue-property-decorator'
 import { getSwiper, getCategoryTopTen } from '@/api/index'
 import Swiper from './components/Swiper/index.vue'
 import Seckill from './components/Seckill/index.vue'
-import Menu from './components/Menu/index.vue'
+import CategoryMenu from './components/CategoryMenu/index.vue'
 
 @Component({
   name: 'Home',
   components: {
     Swiper,
     Seckill,
-    Menu
+    CategoryMenu
   }
 })
 export default class Home extends Vue {

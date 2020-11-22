@@ -69,7 +69,7 @@ export default class Category extends Vue {
   private categoryList: ICategory[] = []
   private productList: IProduct.List[] = []
   private loading = false
-  private scroll: BScroll
+  private scroll: any = null
   private noMore = false
 
   private params: IProduct.ListParams = {

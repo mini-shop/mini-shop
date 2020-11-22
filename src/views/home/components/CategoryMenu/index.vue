@@ -10,9 +10,9 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 @Component({
-  name: 'Menu'
+  name: 'CategoryMenu'
 })
-export default class Menu extends Vue {
+export default class CategoryMenu extends Vue {
   @Prop({ required: true })
   private list!: Array<ICategory>
 

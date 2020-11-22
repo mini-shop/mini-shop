@@ -4,11 +4,10 @@ import router from './router'
 import store from './store'
 import './vant'
 import VueAwesomeSwiper from 'vue-awesome-swiper'
-import 'swiper/swiper-bundle.css'
+import 'swiper/css/swiper.css'
 import './styles/index.scss'
 
 Vue.use(VueAwesomeSwiper)
-
 
 Vue.config.productionTip = false
 
