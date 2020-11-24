@@ -33,6 +33,7 @@
     </div>
     <seckill></seckill>
     <category-menu :list="category"></category-menu>
+    <activity></activity>
   </div>
 </template>
 
@@ -42,13 +43,15 @@ import { getSwiper, getCategoryTopTen } from '@/api/index'
 import Swiper from './components/Swiper/index.vue'
 import Seckill from './components/Seckill/index.vue'
 import CategoryMenu from './components/CategoryMenu/index.vue'
+import Activity from "./components/Activity/index.vue";
 
 @Component({
   name: 'Home',
   components: {
     Swiper,
     Seckill,
-    CategoryMenu
+    CategoryMenu,
+    Activity
   }
 })
 export default class Home extends Vue {
