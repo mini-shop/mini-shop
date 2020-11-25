@@ -34,16 +34,29 @@
     <seckill></seckill>
     <category-menu :list="category"></category-menu>
     <activity></activity>
+    <template v-if="category && category.length > 0">
+      <div class="category-item">
+        <div class="title-image">
+          <img :src="category[0].titleImage" :alt="category[0].name">
+        </div>
+        <div class="list-wrap">
+          <shop-item class="product-item" v-for="item in productList" :key="item.code" :shop="item" @click="showDetail(item.code)">
+            <van-icon class="add-cart" name="plus" />
+          </shop-item>
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import { getSwiper, getCategoryTopTen } from '@/api/index'
+import { getSwiper, getCategoryTopTen, getProductList } from '@/api/index'
 import Swiper from './components/Swiper/index.vue'
 import Seckill from './components/Seckill/index.vue'
 import CategoryMenu from './components/CategoryMenu/index.vue'
-import Activity from "./components/Activity/index.vue";
+import Activity from "./components/Activity/index.vue"
+import ShopItem from '@/components/ShopItem/index.vue'
 
 @Component({
   name: 'Home',
@@ -51,7 +64,8 @@ import Activity from "./components/Activity/index.vue";
     Swiper,
     Seckill,
     CategoryMenu,
-    Activity
+    Activity,
+    ShopItem
   }
 })
 export default class Home extends Vue {
@@ -59,7 +73,16 @@ export default class Home extends Vue {
   private switchVal = 1
   private swiperList = []
 
-  private category = []
+  private category: ICategory[] = []
+
+  private productList: IProduct.List[] = []
+
+  private params: IProduct.ListParams = {
+    categoryCode: 0,
+    isAll: true,
+    pageSize: 15,
+    pageNum: 1
+  }
 
   private async getSwiper () { // 获取轮播图
     const { data } = await getSwiper()
@@ -69,6 +92,17 @@ export default class Home extends Vue {
   private async getCategory () { // 获取一级分类前十
     const { data } = await getCategoryTopTen()
     this.category = data
+    this.getProduct(this.category[0].code)
+  }
+
+  private async getProduct (categoryCode: number) {
+    this.params.categoryCode = categoryCode || this.params.categoryCode
+    try {
+      const { data: { list, totalPage } } = await getProductList(this.params)
+      this.productList = list
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   created () {
@@ -137,6 +171,33 @@ export default class Home extends Vue {
           width: 16px;
           height: 16px;
           margin-right: 3px;
+        }
+      }
+    }
+    .category-item {
+      width: 100%;
+      .title-image {
+        width: 100%;
+        img {
+          width: 100%;
+        }
+      }
+      .list-wrap {
+        background-color: #fff;
+        margin: -50px 15px 0 15px;
+        .product-item {
+          border-bottom: 1px solid #f4f4f4;
+          .add-cart {
+            width: 22px;
+            height: 22px;
+            line-height: 22px;
+            text-align: center;
+            font-size: 18px;
+            background-color: #ef8e48;
+            color: #fff;
+            border-radius: 50%;
+            font-weight: 600;
+          }
         }
       }
     }

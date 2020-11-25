@@ -267,7 +267,7 @@ export default class Category extends Vue {
           padding: 0 10px;
           background-color: #fff;
           .product-item {
-            border-top: 1px solid #f4f4f4;
+            border-bottom: 1px solid #f4f4f4;
             .add-cart {
               width: 22px;
               height: 22px;
