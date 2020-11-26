@@ -1,5 +1,5 @@
 <template>
-  <div class="home-page">
+  <van-list class="home-page" @load="handleLoad" offset="50" :immediate-check="false" v-model="loading" :finished="finishedLoading">
     <van-sticky>
       <van-search
         v-model="keywords"
@@ -34,19 +34,29 @@
     <seckill></seckill>
     <category-menu :list="category"></category-menu>
     <activity></activity>
-    <template v-if="category && category.length > 0">
+    <template v-if="category && category.length > 0 && productList && productList.length > 0">
       <div class="category-item">
         <div class="title-image">
           <img :src="category[0].titleImage" :alt="category[0].name">
         </div>
         <div class="list-wrap">
-          <shop-item class="product-item" v-for="item in productList" :key="item.code" :shop="item" @click="showDetail(item.code)">
+          <shop-item class="product-item" v-for="item in productList[0]" :key="item.code" :shop="item" @click="showDetail(item.code)">
+            <van-icon class="add-cart" name="plus" />
+          </shop-item>
+        </div>
+      </div>
+      <div class="category-item" v-for="currentIndex of currentCategoryIndex" :key="currentIndex">
+        <div class="title-image">
+          <img :src="category[currentIndex].titleImage" :alt="category[0].name">
+        </div>
+        <div class="list-wrap">
+          <shop-item class="product-item" v-for="item in productList[currentIndex]" :key="item.code" :shop="item" @click="showDetail(item.code)">
             <van-icon class="add-cart" name="plus" />
           </shop-item>
         </div>
       </div>
     </template>
-  </div>
+  </van-list>
 </template>
 
 <script lang="ts">
@@ -55,7 +65,7 @@ import { getSwiper, getCategoryTopTen, getProductList } from '@/api/index'
 import Swiper from './components/Swiper/index.vue'
 import Seckill from './components/Seckill/index.vue'
 import CategoryMenu from './components/CategoryMenu/index.vue'
-import Activity from "./components/Activity/index.vue"
+import Activity from './components/Activity/index.vue'
 import ShopItem from '@/components/ShopItem/index.vue'
 
 @Component({
@@ -72,10 +82,13 @@ export default class Home extends Vue {
   private keywords = ''
   private switchVal = 1
   private swiperList = []
+  private loading = false
+  private finishedLoading = false
+  private currentCategoryIndex = 0
 
   private category: ICategory[] = []
 
-  private productList: IProduct.List[] = []
+  private productList: Array<IProduct.List[]> = []
 
   private params: IProduct.ListParams = {
     categoryCode: 0,
@@ -92,17 +105,26 @@ export default class Home extends Vue {
   private async getCategory () { // 获取一级分类前十
     const { data } = await getCategoryTopTen()
     this.category = data
-    this.getProduct(this.category[0].code)
+    this.getProduct(this.category[this.currentCategoryIndex].code)
   }
 
   private async getProduct (categoryCode: number) {
     this.params.categoryCode = categoryCode || this.params.categoryCode
     try {
+      this.loading = true
       const { data: { list, totalPage } } = await getProductList(this.params)
-      this.productList = list
+      this.productList[this.currentCategoryIndex] = list
+      this.currentCategoryIndex < 9 ? this.currentCategoryIndex++ : this.finishedLoading = true
     } catch (e) {
       console.log(e)
+    } finally {
+      this.loading = false
     }
+  }
+
+  private handleLoad () {
+    console.log(1313)
+    this.getProduct(this.category[this.currentCategoryIndex].code)
   }
 
   created () {
@@ -176,6 +198,8 @@ export default class Home extends Vue {
     }
     .category-item {
       width: 100%;
+      display: flex;
+      flex-direction: column;
       .title-image {
         width: 100%;
         img {
@@ -184,7 +208,9 @@ export default class Home extends Vue {
       }
       .list-wrap {
         background-color: #fff;
-        margin: -50px 15px 0 15px;
+        margin: -35px 15px 0 15px;
+        border-radius: 6px;
+        overflow: hidden;
         .product-item {
           border-bottom: 1px solid #f4f4f4;
           .add-cart {
