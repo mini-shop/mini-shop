@@ -11,9 +11,7 @@ module.exports = {
     '/dev-api': { // 服务器
       target: 'https://minishop.cool',
       changeOrigin: true,
-      pathRewrite: {
-        '^/dev-api': '/api'
-      }
+      rewrite: path => path.replace(/^\/dev-api/, '/api')
     }
   }
 }

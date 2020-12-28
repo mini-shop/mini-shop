@@ -17,8 +17,6 @@ import {
   Loading,
   NavBar
 } from 'vant'
-import 'vant/lib/index.css'
-
 const app = createApp()
 
 app.use(Tabbar)
