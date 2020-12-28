@@ -10,20 +10,18 @@
       <van-tabbar-item icon="contact" to="/mine">我的</van-tabbar-item>
     </van-tabbar>
   </div>
-  <router-view></router-view>
 </template>
 
 <script>
-import { ref, reactive, computed } from 'vue'
+import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
 
 export default {
   name: 'App',
   setup (props) {
+    const route = useRoute()
     let active = ref(0)
     let showTabbar = ref(true)
-    const route = useRoute()
-    console.log(route)
 
     const routeKey = computed(() => {
       return route.path

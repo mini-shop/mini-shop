@@ -1,5 +1,5 @@
 {
-  "name": "vue3-minishop",
+  "name": "minishop",
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",

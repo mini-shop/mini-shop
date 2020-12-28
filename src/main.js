@@ -1,11 +1,12 @@
 import { createApp } from 'vue'
 import App from './App.vue'
-import './index.css'
+import './styles/index.scss'
 import router from './router'
 import { store } from './store'
-import './vant'
+import registVant from './vant'
 
-import 'vant/lib/index.css'
 const app = createApp(App)
+registVant(app)
+app.use(router)
+app.mount('#app')
 
-router.isReady().then(() => app.mount('#app'))

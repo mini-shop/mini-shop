@@ -1,4 +1,4 @@
-import { createApp } from 'vue'
+import 'vant/lib/index.css'
 import {
   Tabbar,
   TabbarItem,
@@ -17,21 +17,22 @@ import {
   Loading,
   NavBar
 } from 'vant'
-const app = createApp()
 
-app.use(Tabbar)
-app.use(TabbarItem)
-app.use(Search)
-app.use(Icon)
-app.use(Swipe)
-app.use(SwipeItem)
-app.use(Sticky)
-app.use(VanImage)
-app.use(Lazyload)
-app.use(Sidebar)
-app.use(SidebarItem)
-app.use(Card)
-app.use(List)
-app.use(Divider)
-app.use(Loading)
-app.use(NavBar)
+export default function registVant (app) {
+  app.use(Tabbar)
+  app.use(TabbarItem)
+  app.use(Search)
+  app.use(Icon)
+  app.use(Swipe)
+  app.use(SwipeItem)
+  app.use(Sticky)
+  app.use(VanImage)
+  app.use(Lazyload)
+  app.use(Sidebar)
+  app.use(SidebarItem)
+  app.use(Card)
+  app.use(List)
+  app.use(Divider)
+  app.use(Loading)
+  app.use(NavBar)
+}

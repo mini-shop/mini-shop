@@ -1,5 +1,5 @@
 <template>
-  {{ txt }}{{ $store.state.name }}
+  mine
 </template>
 
 <script>
@@ -7,20 +7,9 @@ import { ref } from 'vue'
 import { useStore } from 'vuex'
 
 export default {
-  name: 'Home',
-  setup (e) {
-
-    let txt = ref('home')
-
-    const store = useStore()
-
-    console.log(store)
-
-    return { txt }
-
-  },
-  created () {
-    console.log('created', this)
+  name: 'Mine',
+  setup () {
+    return {}
   }
 }
 </script>

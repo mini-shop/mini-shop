@@ -20,8 +20,14 @@ import 'swiper/swiper-bundle.min.css'
 
 export default {
   name: 'Swiper',
-  setup (props, context) {
-    console.log(props, context)
+  props: {
+    list: {
+      type: Array,
+      required: true
+    }
+  },
+  setup ({ list }, context) {
+    console.log('swiper', list)
     return {}
   }
 }
