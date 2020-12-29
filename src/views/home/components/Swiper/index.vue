@@ -4,20 +4,9 @@
       <van-image lazy-load :src="item.image" />
     </van-swipe-item>
   </van-swipe>
-  <div class="swiper-container">
-    <div class="swiper-wrapper">
-      <div class="swiper-slide" v-for="item in list" :key="item.id">
-        <van-image lazy-load :src="item.image" />
-      </div>
-    </div>
-  </div>
 </template>
 
 <script>
-import { reactive } from 'vue'
-import Swiper from 'swiper'
-import 'swiper/swiper-bundle.min.css'
-
 export default {
   name: 'Swiper',
   props: {
@@ -25,10 +14,6 @@ export default {
       type: Array,
       required: true
     }
-  },
-  setup ({ list }, context) {
-    console.log('swiper', list)
-    return {}
   }
 }
 </script>

@@ -17,72 +17,75 @@
       </div>
     </van-sticky>
     <swiper :list="swiperList"></swiper>
-<!--    <div class="tips">-->
-<!--      <span>-->
-<!--        <van-image lazy-load :src="require('@/assets/icon1.png')" /> 品质囤货-->
-<!--      </span>-->
-<!--      <span>-->
-<!--        <van-image lazy-load :src="require('@/assets/icon2.png')" /> 畅享低价-->
-<!--      </span>-->
-<!--      <span>-->
-<!--        <van-image lazy-load :src="require('@/assets/icon3.png')" /> 自营配送-->
-<!--      </span>-->
-<!--      <span>-->
-<!--        <van-image lazy-load :src="require('@/assets/icon4.png')" /> 会员返现-->
-<!--      </span>-->
-<!--    </div>-->
-<!--    <seckill></seckill>-->
-<!--    <category-menu :list="category"></category-menu>-->
-<!--    <activity></activity>-->
-<!--    <template v-if="category && category.length > 0 && productList && productList.length > 0">-->
-<!--      <div class="category-item">-->
-<!--        <div class="title-image">-->
-<!--          <img :src="category[0].titleImage" :alt="category[0].name">-->
-<!--        </div>-->
-<!--        <div class="list-wrap">-->
-<!--          <shop-item class="product-item" v-for="item in productList[0]" :key="item.code" :shop="item" @click="showDetail(item.code)">-->
-<!--            <van-icon class="add-cart" name="plus" />-->
-<!--          </shop-item>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--      <div class="category-item" v-for="currentIndex of currentCategoryIndex" :key="currentIndex">-->
-<!--        <div class="title-image">-->
-<!--          <img :src="category[currentIndex].titleImage" :alt="category[0].name">-->
-<!--        </div>-->
-<!--        <div class="list-wrap">-->
-<!--          <shop-item class="product-item" v-for="item in productList[currentIndex]" :key="item.code" :shop="item" @click="showDetail(item.code)">-->
-<!--            <van-icon class="add-cart" name="plus" />-->
-<!--          </shop-item>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </template>-->
+    <div class="tips">
+      <span>
+        <van-image lazy-load src="/@/assets/icon1.png" /> 品质囤货
+      </span>
+      <span>
+        <van-image lazy-load src="/@/assets/icon2.png" /> 畅享低价
+      </span>
+      <span>
+        <van-image lazy-load src="/@/assets/icon3.png" /> 自营配送
+      </span>
+      <span>
+        <van-image lazy-load src="/@/assets/icon4.png" /> 会员返现
+      </span>
+    </div>
+    <seckill></seckill>
+    <category-menu :list="category"></category-menu>
+    <activity></activity>
+    <template v-if="category && category.length > 0 && productList && productList.length > 0">
+      <div class="category-item">
+        <div class="title-image">
+          <img :src="category[0].titleImage" :alt="category[0].name">
+        </div>
+        <div class="list-wrap">
+          <shop-item class="product-item" v-for="item in productList[0]" :key="item.code" :shop="item" @click="showDetail(item.code)">
+            <van-icon class="add-cart" name="plus" />
+          </shop-item>
+        </div>
+      </div>
+      <div class="category-item" v-for="currentIndex of currentCategoryIndex" :key="currentIndex">
+        <div class="title-image">
+          <img :src="category[currentIndex].titleImage" :alt="category[0].name">
+        </div>
+        <div class="list-wrap">
+          <shop-item class="product-item" v-for="item in productList[currentIndex]" :key="item.code" :shop="item" @click="showDetail(item.code)">
+            <van-icon class="add-cart" name="plus" />
+          </shop-item>
+        </div>
+      </div>
+    </template>
   </van-list>
 </template>
 
 <script>
 import { ref, reactive, onMounted } from 'vue'
-import Swiper from './components/Swiper/index.vue'
 import { getSwiper, getCategoryTopTen, getProductList } from '/@/api/index'
-// import Seckill from './components/Seckill/index.vue'
-// import CategoryMenu from './components/CategoryMenu/index.vue'
-// import Activity from './components/Activity/index.vue'
-// import ShopItem from '@/components/ShopItem/index.vue'
+import Swiper from './components/Swiper/index.vue'
+import Seckill from './components/Seckill/index.vue'
+import CategoryMenu from './components/CategoryMenu/index.vue'
+import Activity from './components/Activity/index.vue'
+import ShopItem from '/@/components/ShopItem/index.vue'
 
 export default {
   name: 'Home',
   components: {
-    Swiper
+    Swiper,
+    Seckill,
+    CategoryMenu,
+    Activity,
+    ShopItem
   },
   setup (props, context) {
-    console.log(props, context)
     let keywords = ref('')
     let switchVal = ref(1)
-
+    let swiperList = ref([])
     let loading = ref(false)
     let finishedLoading = ref(false)
     let currentCategoryIndex = ref(0)
-    let category = reactive([])
-    let productList = reactive([])
+    let category = ref([])
+    let productList = ref([])
     let params = {
       categoryCode: 0,
       isAll: true,
@@ -90,37 +93,36 @@ export default {
       pageNum: 1
     }
 
-    const getCategory = async () => {
-      const { data } = await getCategoryTopTen()
-      this.category = data
-      this.getProduct(this.category[this.currentCategoryIndex].code)
-    }
-
-    const getProduct = async () => {
-      this.params.categoryCode = categoryCode || this.params.categoryCode
+    const getProduct = async (categoryCode) => {
+      params.categoryCode = categoryCode || params.categoryCode
       try {
-        this.loading = true
-        const { data: { list, totalPage } } = await getProductList(this.params)
-        this.productList[this.currentCategoryIndex] = list
-        this.currentCategoryIndex < 9 ? this.currentCategoryIndex++ : this.finishedLoading = true
+        loading.value = true
+        const { data: { list, totalPage } } = await getProductList(params)
+        productList.value[currentCategoryIndex.value] = list
+        currentCategoryIndex.value < 9 ? currentCategoryIndex.value++ : finishedLoading.value = true
       } catch (e) {
         console.log(e)
       } finally {
-        this.loading = false
+        loading.value = false
       }
     }
 
     const handleLoad = () => {
-      this.getProduct(this.category[this.currentCategoryIndex].code)
+      getProduct(category.value[currentCategoryIndex.value].code)
     }
 
-    let swiperList = reactive([])
     onMounted (async () => {
       const { data } = await getSwiper()
-      swiperList = data
+      swiperList.value = data
     })
 
-    return { keywords, switchVal, swiperList, loading, finishedLoading, currentCategoryIndex, category, productList }
+    onMounted (async () => {
+      const { data } = await getCategoryTopTen()
+      category.value = data
+      getProduct(category.value[currentCategoryIndex.value].code)
+    })
+
+    return { keywords, switchVal, swiperList, loading, finishedLoading, currentCategoryIndex, category, productList, handleLoad }
   }
 }
 </script>
