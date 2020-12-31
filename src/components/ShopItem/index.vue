@@ -21,18 +21,17 @@
 </template>
 
 <script>
-import { ref } from "vue"
-
 export default {
   name: 'ShopItem',
   props: {
     shop: {
-      type: Array,
+      type: Object,
       required: true
     }
   },
   setup (props, { emit }) {
     const handleClick = () => emit('click')
+    return { handleClick }
   }
 }
 </script>

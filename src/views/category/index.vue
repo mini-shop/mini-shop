@@ -5,12 +5,14 @@
         placeholder="请输入搜索关键词"
         input-align="center"
         clearable />
-    <swiper class="category-swipe" ref="categorySwiper" :options="swiperOptions">
-      <swiper-slide :class="{ 'active': swiperMenuIndex === index }" v-for="(item, index) in categoryList" :key="item.code">
-        <van-image lazy-load :src="item.icon" @click="handleSwiperMenuClick(index)" />
-        <span>{{ item.name }}</span>
-      </swiper-slide>
-    </swiper>
+    <div class="category-swipe swiper-container" ref="categorySwiper">
+      <div class="swiper-wrapper">
+        <div :class="['swiper-slide', 'swiper-item', swiperMenuIndex === index ? 'active' : '' ]" v-for="(item, index) in categoryList" :key="item.code">
+          <van-image lazy-load :src="item.icon" @click="handleSwiperMenuClick(index)" />
+          <span>{{ item.name }}</span>
+        </div>
+      </div>
+    </div>
     <div class="category-content">
       <van-sidebar v-model="sidebarMenuIndex" v-if="sidebarMenu" @change="handleSidebarMenuChange">
         <van-sidebar-item v-for="item in sidebarMenu" :key="item.code" :title="item.name" />
@@ -47,6 +49,7 @@ import ShopItem from '/@/components/ShopItem/index.vue'
 import BScroll from '@better-scroll/core'
 import ScrollBar from '@better-scroll/scroll-bar'
 import Pullup from '@better-scroll/pull-up'
+import Swiper from "swiper";
 
 BScroll.use(ScrollBar)
 BScroll.use(Pullup)
@@ -56,14 +59,9 @@ export default {
   components: {
     ShopItem
   },
-  setup () {
+  setup (props, { attrs, emit, expose, slots }) {
     const router = useRouter()
     let keywords = ref('')
-    let swiperOptions = {
-      slidesPerView: 'auto',
-      spaceBetween: 12,
-      freeMode: true
-    }
     let swiperMenuIndex = ref(0)
     let sidebarMenuIndex = ref(0)
     let categoryList = ref([])
@@ -78,11 +76,19 @@ export default {
       pageNum: 1
     }
 
+    const categorySwiper = ref(null)
     const getAllCategory = async () => {
       const { data } = await getCategory()
       categoryList.value = data
-      const { code } = sidebarMenu[sidebarMenuIndex.value]
-      await this.getProduct(code)
+      nextTick(() => {
+        new Swiper(categorySwiper.value, {
+          slidesPerView: 'auto',
+          spaceBetween: 12,
+          freeMode: true
+        })
+      })
+      const { code } = sidebarMenu.value[sidebarMenuIndex.value]
+      await getProduct(code)
     }
 
     const handleSwiperMenuClick = async (index) => {
@@ -92,7 +98,7 @@ export default {
     }
 
     const handleSidebarMenuChange = () => {
-      const { code, parentCode } = sidebarMenu[sidebarMenuIndex.value]
+      const { code, parentCode } = sidebarMenu.value[sidebarMenuIndex.value]
       params.isAll = parentCode === 0
       params.pageNum = 1
       productList.value = []
@@ -129,7 +135,7 @@ export default {
         loading.value = true
         const { data: { list, totalPage } } = await getProductList(params)
         productList.value = [...productList.value, ...list]
-        if (list.length === 0 || this.params.pageNum >= totalPage) {
+        if (list.length === 0 || params.pageNum >= totalPage) {
           noMore.value = true
           scroll.closePullUp()
         } else {
@@ -144,11 +150,10 @@ export default {
         console.log(e)
       }
     }
-
-    onMounted(async () => {
-      await getAllCategory()
+    const productWrapper = ref(null)
+    onMounted(async (e) => {
       nextTick(() => {
-        scroll = new BScroll(this.productRef, {
+        scroll = new BScroll(productWrapper.value, {
           scrollY: true,
           scrollbar: true,
           pullUpLoad: true,
@@ -156,9 +161,10 @@ export default {
         })
         scroll.on('pullingUp', getProduct)
       })
+      await getAllCategory()
     })
 
-    return { keywords, swiperOptions, swiperMenuIndex, sidebarMenuIndex, categoryList, productList, loading, scroll, noMore }
+    return { keywords, swiperMenuIndex, sidebarMenuIndex, categoryList, productList, loading, scroll, noMore, sidebarMenu, productWrapper, categorySwiper, handleSwiperMenuClick, handleSidebarMenuChange, showDetail }
   }
 }
 </script>
@@ -171,41 +177,47 @@ export default {
   .category-swipe {
     background-color: #fff;
     padding: 10px 12px;
-    .swiper-slide {
-      width: 56px;
+    .swiper-wrapper {
       display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      font-size: 12px;
-      color: #666;
-      .van-image {
-        width: 40px;
-        height: 40px;
-        padding: 1px;
-        border: 1px solid #fff;
-        border-radius: 18px;
-        ::v-deep img {
-          height: 44px;
-          margin-top: -4px;
-        }
-      }
-      span {
-        width: 100%;
-        height: 16px;
-        line-height: 16px;
-        background-color: #fff;
-        margin-top: 3px;
-        border-radius: 4px;
-        text-align: center;
-      }
-      &.active {
+      flex-direction: row;
+      .swiper-slide {
+        width: 56px;
+        display: flex;
+        flex-grow:0;
+        flex-shrink:0;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-size: 12px;
+        color: #666;
         .van-image {
-          border-color: #ef8e48;
+          width: 40px;
+          height: 40px;
+          padding: 1px;
+          border: 1px solid #fff;
+          border-radius: 18px;
+          ::v-deep img {
+            height: 44px;
+            margin-top: -4px;
+          }
         }
         span {
-          background-color: #ef8e48;
-          color: #fff;
+          width: 100%;
+          height: 16px;
+          line-height: 16px;
+          background-color: #fff;
+          margin-top: 3px;
+          border-radius: 4px;
+          text-align: center;
+        }
+        &.active {
+          .van-image {
+            border-color: #ef8e48;
+          }
+          span {
+            background-color: #ef8e48;
+            color: #fff;
+          }
         }
       }
     }
