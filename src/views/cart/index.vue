@@ -30,8 +30,8 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import Recommend from './components/Recommend'
-import ShopItem from '@/components/ShopItem'
+import Recommend from './components/Recommend/index.vue'
+import ShopItem from '@/components/ShopItem/index.vue'
 
 @Component({
   name: 'Cart',
@@ -52,10 +52,10 @@ export default class Cart extends Vue {
     originPrice: 108.9,
     price: 99,
     promotion: '',
-    promotionTag: null,
+    promotionTag: '',
     promotionTitle: '',
     soldNum: 6363,
-    sort: null
+    sort: 1
   }
 
   private onSubmit () {

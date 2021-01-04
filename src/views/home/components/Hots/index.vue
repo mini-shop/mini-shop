@@ -12,13 +12,11 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import ShopItem from '@/components/ShopItem/index.vue'
-import AddCart from '@/components/AddCart'
 
 @Component({
   name: 'Hots',
   components: {
-    ShopItem,
-    AddCart
+    ShopItem
   }
 })
 export default class Hots extends Vue {
