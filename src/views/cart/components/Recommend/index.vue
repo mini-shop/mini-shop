@@ -15,7 +15,7 @@ import { Vue, Component } from 'vue-property-decorator'
 @Component({
   name: 'Recommend'
 })
-export default class Recommend extends Component {
+export default class Recommend extends Vue {
 
 }
 </script>

@@ -23,6 +23,7 @@
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import AddCart from '@/components/AddCart'
+
 @Component({
   name: 'ShopItem',
   components: {
