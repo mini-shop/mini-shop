@@ -28,7 +28,7 @@ export default class App extends Vue {
   @Watch('$route')
   onRouteChange (route: Route) {
     const tabbarRoute = ['/', '/category', '/cart', '/mine']
-    this.showTabbar = !!tabbarRoute.includes(route.path)
+    this.showTabbar = tabbarRoute.includes(route.path)
   }
 }
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div class="category">
-    <div class="item" v-for="item in list" :key="item.code" @click="jumpToCategory(item.code)">
+    <div class="item" v-for="(item, index) in list" :key="item.code" @click="jumpToCategory(index)">
       <van-image lazy-load :src="item.icon" />
       <span>{{ item.name }}</span>
     </div>
@@ -10,14 +10,14 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 @Component({
-  name: 'CategoryMenu'
+  name: 'Menus'
 })
 export default class CategoryMenu extends Vue {
   @Prop({ required: true })
-  private list!: Array<ICategory>
+  private list!: Array<TCategory>
 
-  private jumpToCategory (code: number) {
-    this.$router.replace('/category')
+  private jumpToCategory (index: number) {
+    this.$router.replace(`/category?curr=${index}`)
   }
 }
 </script>

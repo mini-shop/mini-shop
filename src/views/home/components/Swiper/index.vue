@@ -8,12 +8,13 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
+
 @Component({
   name: 'Swiper'
 })
 export default class Swiper extends Vue {
   @Prop({ required: true })
-  private list!: Array<ISwiper>
+  private list!: Array<TSwiper>
 }
 </script>
 

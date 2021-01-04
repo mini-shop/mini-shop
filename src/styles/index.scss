@@ -6,6 +6,16 @@ html, body {
   width: 100%;
   color: #333;
 }
+
+.van-nav-bar {
+  .van-icon {
+    color: #000;
+  }
+  .van-nav-bar__title {
+    font-weight: 700;
+  }
+}
+
 .van-sidebar-item--select {
   background-color: #fff !important;
   color: #ef8e48 !important;
@@ -18,4 +28,8 @@ html, body {
   padding: 20px;
   text-align: center;
   color: #999;
+}
+
+.van-tabbar {
+  z-index: 9;
 }

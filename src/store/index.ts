@@ -1,15 +1,13 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import { TAppState } from './modules/app'
+import { TCartState } from './modules/cart'
 
 Vue.use(Vuex)
 
-export default new Vuex.Store({
-  state: {
-  },
-  mutations: {
-  },
-  actions: {
-  },
-  modules: {
-  }
-})
+export interface TRootState {
+  app: TAppState;
+  cart: TCartState;
+}
+
+export default new Vuex.Store<TRootState>({})

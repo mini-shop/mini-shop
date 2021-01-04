@@ -20,7 +20,7 @@ module.exports = {
     disableHostCheck: true,
     proxy: {
       [process.env.VUE_APP_BASE_API]: { // 服务器
-        target: 'https://api.minishop.cool',
+        target: 'https://minishop.cool/api/',
         changeOrigin: true,
         pathRewrite: {
           ['^' + process.env.VUE_APP_BASE_API]: ''

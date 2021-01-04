@@ -13,7 +13,7 @@
         <span class="current-price">￥{{ shop.price }}</span>
         <span class="origin-price">￥{{ shop.originPrice }}</span>
         <div class="btn">
-          <slot></slot>
+          <add-cart :shop="shop" />
         </div>
       </div>
     </div>
@@ -22,12 +22,16 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
+import AddCart from '@/components/AddCart'
 @Component({
-  name: 'ShopItem'
+  name: 'ShopItem',
+  components: {
+    AddCart
+  }
 })
 export default class ShopItem extends Vue {
-  @Prop()
-  private shop!: IProduct.List
+  @Prop({ required: true })
+  private shop!: TProductList
 
   private handleClick () {
     this.$emit('click')

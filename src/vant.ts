@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import {
+  Button,
   Tabbar,
   TabbarItem,
   Search,
@@ -15,10 +16,15 @@ import {
   List,
   Divider,
   Loading,
-  NavBar
+  NavBar,
+  SwipeCell,
+  Checkbox,
+  CheckboxGroup,
+  SubmitBar
 } from 'vant'
 import '@vant/touch-emulator'
 import 'vant/lib/index.css'
+Vue.use(Button)
 Vue.use(Tabbar)
 Vue.use(TabbarItem)
 Vue.use(Search)
@@ -35,3 +41,7 @@ Vue.use(List)
 Vue.use(Divider)
 Vue.use(Loading)
 Vue.use(NavBar)
+Vue.use(SwipeCell)
+Vue.use(Checkbox)
+Vue.use(CheckboxGroup)
+Vue.use(SubmitBar)

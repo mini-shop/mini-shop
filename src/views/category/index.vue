@@ -17,9 +17,7 @@
       </van-sidebar>
       <div class="product" ref="productWrapper">
         <div class="product-content">
-          <shop-item class="product-item" v-for="item in productList" :key="item.code" :shop="item" @click="showDetail(item.code)">
-            <van-icon class="add-cart" name="plus" />
-          </shop-item>
+          <shop-item class="product-item" v-for="item in productList" :key="item.code" :shop="item" @click="showDetail(item.code)" />
           <div class="pullup-tips">
             <template v-if="!noMore">
               <div v-if="!loading" class="before-trigger">
@@ -41,11 +39,19 @@
 
 <script lang="ts">
 import { Vue, Component, Ref } from 'vue-property-decorator'
+import { Route } from 'vue-router'
 import { getCategory, getProductList } from '@/api/index'
 import BScroll from '@better-scroll/core'
 import ScrollBar from '@better-scroll/scroll-bar'
 import Pullup from '@better-scroll/pull-up'
 import ShopItem from '@/components/ShopItem/index.vue'
+
+interface Params {
+  categoryCode: number;
+  isAll: boolean;
+  pageSize: number;
+  pageNum: number;
+}
 
 BScroll.use(ScrollBar)
 BScroll.use(Pullup)
@@ -66,13 +72,13 @@ export default class Category extends Vue {
 
   private swiperMenuIndex = 0
   private sidebarMenuIndex = 0
-  private categoryList: ICategory[] = []
-  private productList: IProduct.List[] = []
+  private categoryList: TCategory[] = []
+  private productList: TProductList[] = []
   private loading = false
   private scroll: any = null
   private noMore = false
 
-  private params: IProduct.ListParams = {
+  private params: Params = {
     categoryCode: 0,
     isAll: true,
     pageSize: 15,
@@ -97,7 +103,7 @@ export default class Category extends Vue {
    * 获取左侧菜单
    * @private
    */
-  private get sidebarMenu (): ISubCategory[] { // 获取二级分类
+  private get sidebarMenu (): TSubCategory[] { // 获取二级分类
     if (this.categoryList.length > 0) {
       let { code, children } = this.categoryList[this.swiperMenuIndex]
       if (children[0].code !== code) {
@@ -178,8 +184,9 @@ export default class Category extends Vue {
     }
   }
 
-  async created () {
-    await this.getAllCategory()
+  created () {
+    const { curr } = this.$route.query
+    !curr && this.getAllCategory()
   }
 
   mounted () {
@@ -192,6 +199,18 @@ export default class Category extends Vue {
       })
       this.scroll.on('pullingUp', this.getProduct)
     })
+  }
+
+  activated () {
+    const { curr } = this.$route.query
+    if (curr && typeof curr === 'string') {
+      this.swiperMenuIndex = parseInt(curr)
+      this.params.isAll = true
+      this.params.pageNum = 1
+      this.productList = []
+      this.noMore = false
+      this.getAllCategory()
+    }
   }
 }
 </script>
@@ -268,17 +287,6 @@ export default class Category extends Vue {
           background-color: #fff;
           .product-item {
             border-bottom: 1px solid #f4f4f4;
-            .add-cart {
-              width: 22px;
-              height: 22px;
-              line-height: 22px;
-              text-align: center;
-              font-size: 18px;
-              background-color: #ef8e48;
-              color: #fff;
-              border-radius: 50%;
-              font-weight: 600;
-            }
           }
         }
       }

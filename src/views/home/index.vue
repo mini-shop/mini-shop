@@ -1,5 +1,6 @@
 <template>
   <van-list class="home-page" @load="handleLoad" offset="50" :immediate-check="false" v-model="loading" :finished="finishedLoading">
+    <!--  顶部搜索、地址切换  -->
     <van-sticky>
       <van-search
         v-model="keywords"
@@ -16,7 +17,9 @@
         </div>
       </div>
     </van-sticky>
-    <swiper :list="swiperList"></swiper>
+    <!--  轮播图  -->
+    <swiper :list="swiperList" />
+    <!--    -->
     <div class="tips">
       <span>
         <van-image lazy-load :src="require('@/assets/icon1.png')" /> 品质囤货
@@ -31,30 +34,15 @@
         <van-image lazy-load :src="require('@/assets/icon4.png')" /> 会员返现
       </span>
     </div>
-    <seckill></seckill>
-    <category-menu :list="category"></category-menu>
-    <activity></activity>
-    <template v-if="category && category.length > 0 && productList && productList.length > 0">
-      <div class="category-item">
-        <div class="title-image">
-          <img :src="category[0].titleImage" :alt="category[0].name">
-        </div>
-        <div class="list-wrap">
-          <shop-item class="product-item" v-for="item in productList[0]" :key="item.code" :shop="item" @click="showDetail(item.code)">
-            <van-icon class="add-cart" name="plus" />
-          </shop-item>
-        </div>
-      </div>
-      <div class="category-item" v-for="currentIndex of currentCategoryIndex" :key="currentIndex">
-        <div class="title-image">
-          <img :src="category[currentIndex].titleImage" :alt="category[0].name">
-        </div>
-        <div class="list-wrap">
-          <shop-item class="product-item" v-for="item in productList[currentIndex]" :key="item.code" :shop="item" @click="showDetail(item.code)">
-            <van-icon class="add-cart" name="plus" />
-          </shop-item>
-        </div>
-      </div>
+    <!--  一元秒杀  -->
+    <seckill />
+    <!--  商品分类  -->
+    <menus :list="category" />
+    <!--  活动入口  -->
+    <activity />
+    <!--  热门商品  -->
+    <template v-if="productList.length > 0">
+      <hots  v-for="(products, index) in productList" :key="index" :img="category[index].titleImage" :data="products" />
     </template>
   </van-list>
 </template>
@@ -64,18 +52,25 @@ import { Vue, Component } from 'vue-property-decorator'
 import { getSwiper, getCategoryTopTen, getProductList } from '@/api/index'
 import Swiper from './components/Swiper/index.vue'
 import Seckill from './components/Seckill/index.vue'
-import CategoryMenu from './components/CategoryMenu/index.vue'
+import Menus from './components/Menus/index.vue'
 import Activity from './components/Activity/index.vue'
-import ShopItem from '@/components/ShopItem/index.vue'
+import Hots from './components/Hots/index.vue'
+
+interface Params {
+  categoryCode: number;
+  isAll: boolean;
+  pageSize: number;
+  pageNum: number;
+}
 
 @Component({
   name: 'Home',
   components: {
     Swiper,
     Seckill,
-    CategoryMenu,
+    Menus,
     Activity,
-    ShopItem
+    Hots
   }
 })
 export default class Home extends Vue {
@@ -86,33 +81,46 @@ export default class Home extends Vue {
   private finishedLoading = false
   private currentCategoryIndex = 0
 
-  private category: ICategory[] = []
+  private category: TCategory[] = []
 
-  private productList: Array<IProduct.List[]> = []
+  private productList: Array<TProductList[]> = []
 
-  private params: IProduct.ListParams = {
+  private params: Params = {
     categoryCode: 0,
     isAll: true,
     pageSize: 15,
     pageNum: 1
   }
 
-  private async getSwiper () { // 获取轮播图
+  /**
+   * 获取轮播图
+   * @private
+   * */
+  private async getSwiper () {
     const { data } = await getSwiper()
     this.swiperList = data
   }
 
-  private async getCategory () { // 获取一级分类前十
+  /**
+   * 获取一级分类前十
+   * @private
+   * */
+  private async getCategory () {
     const { data } = await getCategoryTopTen()
     this.category = data
     this.getProduct(this.category[this.currentCategoryIndex].code)
   }
 
+  /**
+   * 根据分类code获取商品
+   * @param categoryCode
+   * @private
+   */
   private async getProduct (categoryCode: number) {
     this.params.categoryCode = categoryCode || this.params.categoryCode
     try {
       this.loading = true
-      const { data: { list, totalPage } } = await getProductList(this.params)
+      const { data: { list } } = await getProductList(this.params)
       this.productList[this.currentCategoryIndex] = list
       this.currentCategoryIndex < 9 ? this.currentCategoryIndex++ : this.finishedLoading = true
     } catch (e) {
@@ -123,7 +131,6 @@ export default class Home extends Vue {
   }
 
   private handleLoad () {
-    console.log(1313)
     this.getProduct(this.category[this.currentCategoryIndex].code)
   }
 
@@ -193,37 +200,6 @@ export default class Home extends Vue {
           width: 16px;
           height: 16px;
           margin-right: 3px;
-        }
-      }
-    }
-    .category-item {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      .title-image {
-        width: 100%;
-        img {
-          width: 100%;
-        }
-      }
-      .list-wrap {
-        background-color: #fff;
-        margin: -35px 15px 0 15px;
-        border-radius: 6px;
-        overflow: hidden;
-        .product-item {
-          border-bottom: 1px solid #f4f4f4;
-          .add-cart {
-            width: 22px;
-            height: 22px;
-            line-height: 22px;
-            text-align: center;
-            font-size: 18px;
-            background-color: #ef8e48;
-            color: #fff;
-            border-radius: 50%;
-            font-weight: 600;
-          }
         }
       }
     }

@@ -57,7 +57,7 @@ export default class ProductDetail extends Vue {
   private propKey = ''
   private showPage = false
 
-  private detail: IProduct.Detail = {
+  private detail: TProductDetail = {
     code: '',
     name: '',
     shopImages: [],
