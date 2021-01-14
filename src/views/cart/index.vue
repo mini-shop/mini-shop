@@ -9,8 +9,8 @@
     <div class="wrap">
       <div class="cart-list">
         <van-checkbox-group v-model="selectedItems">
-          <van-swipe-cell v-for="i in 10" :key="i">
-            <van-checkbox name="a" icon-size="15px" checked-color="#e94019"></van-checkbox>
+          <van-swipe-cell v-for="shop in cartList" :key="shop.code">
+            <van-checkbox :name="shop.code" icon-size="15px" checked-color="#e94019"></van-checkbox>
             <shop-item class="product-item" :shop="shop" @click="showDetail(shop.code)">
               <van-icon class="add-cart" name="plus" />
             </shop-item>
@@ -22,7 +22,7 @@
       </div>
       <recommend />
     </div>
-    <van-submit-bar :price="3050" button-text="去结算" @submit="onSubmit">
+    <van-submit-bar :price="totalPrice" button-text="去结算" @submit="onSubmit">
       <van-checkbox icon-size="15px" checked-color="#e94019" v-model="isSelecteAll">全选</van-checkbox>
     </van-submit-bar>
   </div>
@@ -32,6 +32,7 @@
 import { Vue, Component } from 'vue-property-decorator'
 import Recommend from './components/Recommend/index.vue'
 import ShopItem from '@/components/ShopItem/index.vue'
+import { CartModule } from '@/store/modules/cart'
 
 @Component({
   name: 'Cart',
@@ -41,21 +42,19 @@ import ShopItem from '@/components/ShopItem/index.vue'
   }
 })
 export default class Cart extends Vue {
-  private selectedItems: string[] = []
-  private isSelecteAll = false
-  private shop: TProductList = {
-    code: '87050410',
-    image: 'https://pan.zhangtong.work/minishop/baseinfo/productImage/201912/31/4b078083a92aaceac6f4ce01.small.jpg',
-    inventory: 1,
-    label: '明日达',
-    name: '伊利安慕希高端畅饮希腊风味酸奶原味230g*10瓶',
-    originPrice: 108.9,
-    price: 99,
-    promotion: '',
-    promotionTag: '',
-    promotionTitle: '',
-    soldNum: 6363,
-    sort: 1
+  private selectedItems = CartModule.checkedCodes
+
+  private get cartList () {
+    return CartModule.getList
+  }
+
+  private get totalPrice () {
+    return CartModule.totalPrice * 100
+  }
+
+  private get isSelecteAll () {
+    console.log(this.selectedItems.length, CartModule.getList.length)
+    return this.selectedItems.length === CartModule.getList.length
   }
 
   private onSubmit () {
@@ -80,6 +79,7 @@ export default class Cart extends Vue {
           position: relative;
           padding-bottom: 1px;
           .van-swipe-cell__wrapper {
+            width: 100%;
             display: flex;
             flex-direction: row;
           }

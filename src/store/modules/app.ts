@@ -1,4 +1,4 @@
-import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-decorators'
+import { VuexModule, Module, getModule } from 'vuex-module-decorators'
 import store from '@/store'
 
 export interface TAppState {
@@ -6,8 +6,8 @@ export interface TAppState {
 }
 
 @Module({ dynamic: true, store, name: 'app' })
-class App extends VuexModule implements TAppState {
-  public name = ''
+class App extends VuexModule implements TAppState{
+  name = ''
 }
 
 export const AppModule = getModule(App)

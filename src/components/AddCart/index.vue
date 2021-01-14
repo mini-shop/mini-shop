@@ -1,13 +1,16 @@
 <template>
   <div class="add-cart-comp">
-    <van-icon class="decrease-btn" name="minus" @click.stop="decrease" />
-    <span class="cart-num">{{ cartNum }}</span>
+    <template v-if="cartNum > 0">
+      <van-icon class="decrease-btn" name="minus" @click.stop="decrease" />
+      <span class="cart-num">{{ cartNum }}</span>
+    </template>
     <van-icon class="increase-btn" name="plus" @click.stop="increase" />
   </div>
 </template>
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
+import { CartModule } from '@/store/modules/cart'
 
 @Component({
   name: 'AddCart'
@@ -16,13 +19,18 @@ export default class AddCart extends Vue {
   @Prop({ required: true })
   private shop!: TProductList
 
-  private cartNum = 0
+  private get cartNum (): number {
+    const list: TCartData[] = CartModule.getList
+    const target = list.find(item => this.shop.code === item.code)
+    return (target && target.count) || 0
+  }
+
   private decrease () {
-    console.log('decrease')
+    CartModule.decrease(this.shop)
   }
 
   private increase () {
-    console.log('increase')
+    CartModule.increase(this.shop)
   }
 }
 

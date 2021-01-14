@@ -51,3 +51,8 @@ interface TProductDetail {
   pintuanmsg: string;
   cartMsg: string;
 }
+
+interface TCartData extends TProductList{
+  count: number;
+  checked: boolean;
+}
